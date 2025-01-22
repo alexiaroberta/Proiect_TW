@@ -1,10 +1,13 @@
 import express from 'express';
-import mysql from 'mysql2/promise'
-import { DB_USERNAME,DB_PASSWORD } from './Const.js';
+import mysql from 'mysql2/promise';
+import { DB_USERNAME, DB_PASSWORD } from './Const.js';
 import activitateRouter from './routes/ActivitateRoutes.js';
 import feedbackRouter from './routes/FeedbackRoutes.js';
+import cors from 'cors'; 
 
 let app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({
@@ -12,7 +15,7 @@ app.use(express.urlencoded({
 }));
 
 app.use('/api', activitateRouter);
-app.use('/api',feedbackRouter);
+app.use('/api', feedbackRouter);
 
 let conn;
 

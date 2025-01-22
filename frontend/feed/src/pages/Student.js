@@ -1,18 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Student.css';
 
 function Student() {
   const [activityCode, setActivityCode] = useState('');
   const [isCodeValid, setIsCodeValid] = useState(false);
   const [feedback, setFeedback] = useState([]);
+  const [validCodes, setValidCodes] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const validCodes = ['ACT123', 'ACT456', 'ACT789'];
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/coduri')
+      .then(response => {
+        console.log('Coduri activități:', response.data);
+        setValidCodes(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching activity codes:', error);
+        setErrorMessage('There was an error fetching the activity codes.');
+      });
+  }, []);
 
   const handleCodeSubmit = () => {
+    console.log('Cod introdus:', activityCode);
     if (validCodes.includes(activityCode)) {
       setIsCodeValid(true);
+      setErrorMessage('');
     } else {
-      alert('Invalid activity code. Please try again.');
+      setErrorMessage('Invalid activity code. Please try again.');
     }
   };
 
@@ -34,6 +49,7 @@ function Student() {
           placeholder="Enter code"
         />
         <button onClick={handleCodeSubmit}>Submit</button>
+        {errorMessage && <p className="error">{errorMessage}</p>} { }
       </div>
     );
   }

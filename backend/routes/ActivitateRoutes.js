@@ -28,7 +28,7 @@ activitateRouter.route('/activitate/:id').get(async (req, res) => {
         res.status(200).json(activitate)
     else
         res.status(400).json({"Error": "Not exist"})
-})
+}) 
 
 activitateRouter.route('/activitate/:id').put(async (req, res) => {
     let ret = await updateActivitate(req.params.id, req.body);
@@ -38,6 +38,19 @@ activitateRouter.route('/activitate/:id').put(async (req, res) => {
     else
         res.status(200).json(ret.obj)
 })
+
+activitateRouter.route('/coduri').get(async (req, res) => {
+    try {
+        const activitati = await getActivitate();
+        
+        const coduri = activitati.map((activitate) => activitate.ActivitateCodUnic);
+        
+        res.status(200).json(coduri);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 activitateRouter.route('/activitate/:id').delete(async (req, res) => {
     let ret = await deleteActivitate(req.params.id);

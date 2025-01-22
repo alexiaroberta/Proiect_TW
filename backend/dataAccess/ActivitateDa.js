@@ -16,22 +16,24 @@ async function createActivitate(activitate, ORM = true) {
             console.log(results.insertId)
         })
     }
-    else{
+    else {
         return await Activitate.create(activitate);
     }
 }
 
 async function getActivitate(ORM = true) {
     if (!ORM) {
-        conn.query("SELECT * from Activitate", (error, results, fields) => {
-            if (error) throw error;
-
-            console.log(fields);
-            console.log(results);
+        return new Promise((resolve, reject) => {
+            conn.query("SELECT * FROM Activitate", (error, results) => {
+                if (error) {
+                    console.error(error);
+                    return reject(error);
+                }
+                resolve(results);
+            });
         });
-    }
-    else {
-        return await Activitate.findAll();
+    } else {
+        return await Activitate.findAll(); 
     }
 }
 
@@ -47,46 +49,42 @@ async function getActivitateId(id, ORM = true) {
     }
 }
 
-async function updateActivitate(id,activitate,ORM = false){
+async function updateActivitate(id, activitate, ORM = false) {
     if (parseInt(id) !== activitate.ActivitateId)
-        return {error: true, msg: "Entity id diff"}
+        return { error: true, msg: "Entity id diff" }
 
     let updateE = await getActivitateId(id);
     if (!updateE)
-        return {error: true, msg: "No entity found"}
+        return { error: true, msg: "No entity found" }
 
-    if (!ORM)
-    {
+    if (!ORM) {
         conn.query('UPDATE Activitate SET ? WHERE ActivitateId = ?', [activitate, id], (error, results, fields) => {
             if (error) throw error;
             console.log('Utilizatorul a fost actualizat cu succes.');
-          });   
-        return {error: false, msg:"Success", obj: "Success"}
-    } 
-    else
-    {
-        return {error: false, msg: "", obj: await updateEntity.update(activitate)};
+        });
+        return { error: false, msg: "Success", obj: "Success" }
+    }
+    else {
+        return { error: false, msg: "", obj: await updateEntity.update(activitate) };
     }
 }
 
-async function deleteActivitate(id, ORM = false){
+async function deleteActivitate(id, ORM = false) {
     let deleteE = await getActivitateId(id);
     if (!deleteE)
-        return {error: true, msg: "No entity found"}
+        return { error: true, msg: "No entity found" }
 
-        if (!ORM)
-        {
-            conn.query('DELETE FROM Activitate WHERE ActivitateId = ?', id, (error, results, fields) => {
-                if (error) throw error;
-                console.log('Success.');
-              });
-              return {error: false, msg:"Success", obj: "Success"}
-        } 
-    
-        else
-        {
-            return {error: false , msg: "", obj: await deleteEntity.destroy()};
-        }
+    if (!ORM) {
+        conn.query('DELETE FROM Activitate WHERE ActivitateId = ?', id, (error, results, fields) => {
+            if (error) throw error;
+            console.log('Success.');
+        });
+        return { error: false, msg: "Success", obj: "Success" }
+    }
+
+    else {
+        return { error: false, msg: "", obj: await deleteEntity.destroy() };
+    }
 }
 
 export {
